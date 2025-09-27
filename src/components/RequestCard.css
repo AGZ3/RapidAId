@@ -14,10 +14,17 @@
 }
 
 .request-card-header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 16px;
+}
+
+.request-card-priority {
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 
 .request-card-badges {

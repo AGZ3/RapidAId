@@ -32,28 +32,28 @@ const RequestForm = ({ onSubmitSuccess }) => {
     setIsSubmitting(true);
 
     try {
-      // TODO: Replace with actual API call
-      const response = await fetch('/api/requests', {
+          const response = await fetch('http://127.0.0.1:8000/api/requests', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({
-          name: formData.name.trim() || null,
-          location: formData.location.trim(),
-          request_text: formData.request_text.trim()
+        body: new URLSearchParams({
+            name: formData.name.trim() || '',
+            address: formData.location.trim(),
+            request_text: formData.request_text.trim()
         })
-      });
+    });
+
 
       if (!response.ok) {
         throw new Error('Failed to submit request');
       }
 
       const data = await response.json();
-      
+
       setSuccess(true);
       setFormData({ name: '', location: '', request_text: '' });
-      
+
       if (onSubmitSuccess) {
         onSubmitSuccess(data);
       }
@@ -165,7 +165,7 @@ const RequestForm = ({ onSubmitSuccess }) => {
       <div className="emergency-notice">
         <div className="emergency-icon">⚠️</div>
         <div className="emergency-text">
-          <strong>Emergency Notice:</strong> If this is a life-threatening emergency, please call 911 immediately. 
+          <strong>Emergency Notice:</strong> If this is a life-threatening emergency, please call 911 immediately.
           This system is for non-emergency aid coordination.
         </div>
       </div>
