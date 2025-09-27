@@ -1,6 +1,6 @@
-# Rapid Aid Matcher - Frontend
+# RapidAid 
 
-A React-based frontend for the Rapid Aid Matcher disaster relief application. This application allows users to submit aid requests and responders to view and coordinate relief efforts.
+A React-based full stack application for the RapidAid Matcher disaster relief application. This application allows users to submit aid requests and responders to view and coordinate relief efforts.
 
 ## Features
 
