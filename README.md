@@ -56,7 +56,7 @@ src/
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd rapid-aid-matcher
+   cd Shellhacks_2025
    ```
 
 2. Install dependencies:
