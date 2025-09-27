@@ -15,6 +15,7 @@ const DashboardPage = () => {
       location: '1234 Main St, Miami, FL',
       request_text: 'Need food and water for family of 4. Lost everything in the hurricane.',
       category: 'food',
+      status: 'unclaimed',
       created_at: '2024-01-15T10:30:00Z'
     },
     {
@@ -23,6 +24,7 @@ const DashboardPage = () => {
       location: '567 Oak Ave, Tampa, FL',
       request_text: 'Medical supplies needed for elderly mother with diabetes.',
       category: 'medical',
+      status: 'claimed',
       created_at: '2024-01-15T09:15:00Z'
     },
     {
@@ -31,6 +33,7 @@ const DashboardPage = () => {
       location: '890 Pine St, Orlando, FL',
       request_text: 'Shelter needed for tonight. House is flooded.',
       category: 'shelter',
+      status: 'unclaimed',
       created_at: '2024-01-15T08:45:00Z'
     },
     {
@@ -39,6 +42,7 @@ const DashboardPage = () => {
       location: '321 Elm St, Jacksonville, FL',
       request_text: 'Need clean drinking water. Our water supply is contaminated.',
       category: 'water',
+      status: 'completed',
       created_at: '2024-01-15T07:20:00Z'
     },
     {
@@ -47,7 +51,26 @@ const DashboardPage = () => {
       location: '654 Maple Dr, Tallahassee, FL',
       request_text: 'Looking for blankets and warm clothes for children.',
       category: 'other',
+      status: 'unclaimed',
       created_at: '2024-01-14T22:10:00Z'
+    },
+    {
+      id: 6,
+      name: 'Ana Garcia',
+      location: '789 Coral Way, Miami, FL',
+      request_text: 'Emergency medication needed for my son who has asthma. Pharmacy is closed and we ran out.',
+      category: 'medical',
+      status: 'unclaimed',
+      created_at: '2024-01-15T11:45:00Z'
+    },
+    {
+      id: 7,
+      name: 'David Lee',
+      location: '1357 Birch Rd, Chicago, IL',
+      request_text: 'Need diapers and baby formula for my 6-month-old. Local stores are out of stock.',
+      category: 'other',
+      status: 'unclaimed',
+      created_at: '2024-01-15T12:30:00Z'
     }
   ];
 
@@ -76,6 +99,45 @@ const DashboardPage = () => {
     }
   };
 
+  const handleStatusChange = async (requestId, newStatus) => {
+    try {
+      // TODO: Replace with actual API call
+      const response = await fetch(`/api/requests/${requestId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update request status');
+      }
+
+      // For development: Update local state
+      setRequests(prevRequests => 
+        prevRequests.map(request => 
+          request.id === requestId 
+            ? { ...request, status: newStatus }
+            : request
+        )
+      );
+
+      console.log(`Request ${requestId} status updated to: ${newStatus}`);
+    } catch (err) {
+      console.error('Error updating request status:', err);
+      
+      // For development: Still update local state even if API fails
+      setRequests(prevRequests => 
+        prevRequests.map(request => 
+          request.id === requestId 
+            ? { ...request, status: newStatus }
+            : request
+        )
+      );
+    }
+  };
+
   useEffect(() => {
     fetchRequests();
   }, []);
@@ -88,6 +150,12 @@ const DashboardPage = () => {
       return acc;
     }, {});
     
+    const statusCounts = requests.reduce((acc, request) => {
+      const status = request.status || 'unclaimed';
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {});
+    
     const uniqueLocations = new Set(
       requests.map(r => r.location?.split(',')[1]?.trim()).filter(Boolean)
     ).size;
@@ -95,6 +163,7 @@ const DashboardPage = () => {
     return {
       totalRequests,
       categoryCounts,
+      statusCounts,
       uniqueLocations
     };
   };
@@ -124,25 +193,29 @@ const DashboardPage = () => {
 
       <div className="dashboard-stats">
         <div className="container">
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-number">{stats.totalRequests}</div>
-              <div className="stat-label">Total Requests</div>
-            </div>
-            
-            <div className="stat-card">
-              <div className="stat-number">{stats.categoryCounts.food || 0}</div>
-              <div className="stat-label">Food Requests</div>
-            </div>
-            
-            <div className="stat-card">
-              <div className="stat-number">{stats.categoryCounts.medical || 0}</div>
-              <div className="stat-label">Medical Requests</div>
-            </div>
-            
-            <div className="stat-card">
-              <div className="stat-number">{stats.uniqueLocations}</div>
-              <div className="stat-label">Cities Affected</div>
+          {/* Status Statistics */}
+          <div className="stats-section">
+            <h3 className="stats-section-title">Response Status</h3>
+            <div className="stats-grid">
+              <div className="stat-card urgent">
+                <div className="stat-number">{stats.statusCounts.unclaimed || 0}</div>
+                <div className="stat-label">Needs Help</div>
+              </div>
+              
+              <div className="stat-card progress">
+                <div className="stat-number">{stats.statusCounts.claimed || 0}</div>
+                <div className="stat-label">In Progress</div>
+              </div>
+              
+              <div className="stat-card completed">
+                <div className="stat-number">{stats.statusCounts.completed || 0}</div>
+                <div className="stat-label">Completed</div>
+              </div>
+              
+              <div className="stat-card">
+                <div className="stat-number">{Math.round(((stats.statusCounts.completed || 0) / stats.totalRequests) * 100) || 0}%</div>
+                <div className="stat-label">Completion Rate</div>
+              </div>
             </div>
           </div>
         </div>
@@ -154,6 +227,7 @@ const DashboardPage = () => {
             requests={requests}
             isLoading={isLoading}
             error={error}
+            onStatusChange={handleStatusChange}
           />
         </div>
       </div>

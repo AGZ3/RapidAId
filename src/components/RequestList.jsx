@@ -2,15 +2,22 @@ import React, { useState } from 'react';
 import RequestCard from './RequestCard.jsx';
 import './RequestList.css';
 
-const RequestList = ({ requests, isLoading, error }) => {
-  const [filter, setFilter] = useState('all');
+const RequestList = ({ requests, isLoading, error, onStatusChange }) => {
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
 
   const categories = ['all', 'food', 'water', 'shelter', 'medical', 'other'];
+  const statuses = ['all', 'unclaimed', 'claimed', 'completed'];
 
   const filteredRequests = requests?.filter(request => {
-    if (filter === 'all') return true;
-    return request.category?.toLowerCase() === filter;
+    // Category filter
+    const categoryMatch = categoryFilter === 'all' || request.category?.toLowerCase() === categoryFilter;
+    
+    // Status filter
+    const statusMatch = statusFilter === 'all' || request.status?.toLowerCase() === statusFilter;
+    
+    return categoryMatch && statusMatch;
   }) || [];
 
   const sortedRequests = [...filteredRequests].sort((a, b) => {
@@ -19,8 +26,6 @@ const RequestList = ({ requests, isLoading, error }) => {
         return new Date(b.created_at || 0) - new Date(a.created_at || 0);
       case 'oldest':
         return new Date(a.created_at || 0) - new Date(b.created_at || 0);
-      case 'location':
-        return (a.location || '').localeCompare(b.location || '');
       default:
         return 0;
     }
@@ -62,13 +67,29 @@ const RequestList = ({ requests, isLoading, error }) => {
             <label htmlFor="category-filter">Category:</label>
             <select
               id="category-filter"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
               className="filter-select"
             >
               {categories.map(category => (
                 <option key={category} value={category}>
                   {category.charAt(0).toUpperCase() + category.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="status-filter">Status:</label>
+            <select
+              id="status-filter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="filter-select"
+            >
+              {statuses.map(status => (
+                <option key={status} value={status}>
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
                 </option>
               ))}
             </select>
@@ -84,7 +105,6 @@ const RequestList = ({ requests, isLoading, error }) => {
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
-              <option value="location">Location</option>
             </select>
           </div>
         </div>
@@ -94,9 +114,9 @@ const RequestList = ({ requests, isLoading, error }) => {
         <div className="request-list-empty">
           <h3>No requests found</h3>
           <p>
-            {filter === 'all' 
+            {categoryFilter === 'all' && statusFilter === 'all'
               ? 'No aid requests have been submitted yet.'
-              : `No requests found for the "${filter}" category.`
+              : `No requests found matching the current filters.`
             }
           </p>
         </div>
@@ -106,6 +126,7 @@ const RequestList = ({ requests, isLoading, error }) => {
             <RequestCard 
               key={request.id || index} 
               request={request} 
+              onStatusChange={onStatusChange}
             />
           ))}
         </div>

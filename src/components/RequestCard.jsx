@@ -1,8 +1,9 @@
 import React from 'react';
 import CategoryBadge from './CategoryBadge.jsx';
+import StatusBadge from './StatusBadge.jsx';
 import './RequestCard.css';
 
-const RequestCard = ({ request }) => {
+const RequestCard = ({ request, onStatusChange }) => {
   const formatDate = (dateString) => {
     if (!dateString) return 'Just now';
     const date = new Date(dateString);
@@ -12,11 +13,57 @@ const RequestCard = ({ request }) => {
     });
   };
 
+  const handleStatusChange = (newStatus) => {
+    if (onStatusChange) {
+      onStatusChange(request.id, newStatus);
+    }
+  };
+
+  const getStatusActions = () => {
+    const status = request.status?.toLowerCase();
+    
+    switch (status) {
+      case 'unclaimed':
+        return (
+          <button 
+            className="btn btn-primary btn-sm"
+            onClick={() => handleStatusChange('claimed')}
+          >
+            Claim Request
+          </button>
+        );
+      case 'claimed':
+        return (
+          <div className="status-actions">
+            <button 
+              className="btn btn-success btn-sm"
+              onClick={() => handleStatusChange('completed')}
+            >
+              Mark Complete
+            </button>
+            <button 
+              className="btn btn-secondary btn-sm"
+              onClick={() => handleStatusChange('unclaimed')}
+            >
+              Unclaim
+            </button>
+          </div>
+        );
+      case 'completed':
+        return (
+          <span className="completion-note">✓ Request fulfilled</span>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="request-card">
+    <div className="request-card" data-status={request.status}>
       <div className="request-card-header">
         <div className="request-card-badges">
           <CategoryBadge category={request.category} />
+          <StatusBadge status={request.status} />
         </div>
         <div className="request-card-timestamp">
           {formatDate(request.created_at)}
@@ -45,6 +92,10 @@ const RequestCard = ({ request }) => {
             ID: {request.id}
           </div>
         )}
+      </div>
+
+      <div className="request-card-actions">
+        {getStatusActions()}
       </div>
     </div>
   );
