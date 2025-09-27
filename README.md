@@ -1,6 +1,6 @@
-# Rapid Aid Matcher - Frontend
+# RapidAid 
 
-A React-based frontend for the Rapid Aid Matcher disaster relief application. This application allows users to submit aid requests and responders to view and coordinate relief efforts with status tracking.
+A React-based frontend for the Rapid Aid Matcher disaster relief application. This application allows users to submit aid requests and responders to view and coordinate relief efforts.
 
 ## Features
 
@@ -63,7 +63,7 @@ src/
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd rapid-aid-matcher
+   cd Shellhacks_2025
    ```
 
 2. Install dependencies:
