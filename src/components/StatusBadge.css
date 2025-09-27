@@ -1,0 +1,57 @@
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  border: 1px solid transparent;
+}
+
+.status-unclaimed {
+  background-color: #fef9c3;
+  color: #a16207;
+  border-color: #eab308;
+}
+
+.status-claimed {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+}
+
+.status-completed {
+  background-color: #d1fae5;
+  color: #065f46;
+  border-color: #10b981;
+}
+
+.status-unknown {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-color: #9ca3af;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .status-unclaimed {
+    background-color: #451a03;
+    color: #fbbf24;
+  }
+
+  .status-claimed {
+    background-color: #1e3a8a;
+    color: #60a5fa;
+  }
+
+  .status-completed {
+    background-color: #064e3b;
+    color: #34d399;
+  }
+
+  .status-unknown {
+    background-color: #374151;
+    color: #d1d5db;
+  }
+}

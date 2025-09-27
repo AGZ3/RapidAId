@@ -1,12 +1,14 @@
-# Rapid Aid Matcher - Frontend
+# RapidAid 
 
 A React-based frontend for the Rapid Aid Matcher disaster relief application. This application allows users to submit aid requests and responders to view and coordinate relief efforts.
 
 ## Features
 
 - **Submit Aid Requests**: Users can submit requests with their location and aid needs
-- **Responder Dashboard**: View categorized aid requests with filtering and sorting options
+- **Responder Dashboard**: View categorized aid requests with filtering, sorting, and status management
+- **Request Status System**: Track requests through unclaimed → claimed → completed workflow
 - **AI-Powered Categorization**: Backend AI categorizes requests (Food, Water, Shelter, Medical, Other)
+- **Status-based Analytics**: Dashboard shows response progress and completion metrics
 - **Mobile-Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Clean Component Architecture**: Reusable, maintainable React components
 
@@ -23,25 +25,30 @@ A React-based frontend for the Rapid Aid Matcher disaster relief application. Th
 ```
 src/
 ├── components/           # Reusable UI components
-│   ├── Header.js         # Navigation header
+│   ├── Header.jsx        # Navigation header
 │   ├── Header.css
-│   ├── RequestForm.js    # Aid request submission form
+│   ├── RequestForm.jsx   # Aid request submission form
 │   ├── RequestForm.css
-│   ├── RequestList.js    # List of aid requests
+│   ├── RequestList.jsx   # List of aid requests with filtering
 │   ├── RequestList.css
-│   ├── RequestCard.js    # Individual request display
+│   ├── RequestCard.jsx   # Individual request display with status actions
 │   ├── RequestCard.css
-│   ├── CategoryBadge.js  # Category display badge
-│   └── CategoryBadge.css
+│   ├── CategoryBadge.jsx # Category display badge
+│   ├── CategoryBadge.css
+│   ├── StatusBadge.jsx   # Request status badge (unclaimed/claimed/completed)
+│   └── StatusBadge.css
 ├── pages/                # Page components
-│   ├── SubmitRequestPage.js    # Submit request page
+│   ├── SubmitRequestPage.jsx    # Submit request page
 │   ├── SubmitRequestPage.css
-│   ├── DashboardPage.js        # Responder dashboard
+│   ├── DashboardPage.jsx        # Responder dashboard with status analytics
 │   └── DashboardPage.css
-├── App.js                # Main app component
+├── assets/              # Static assets
+│   ├── logo.png
+│   └── react.svg
+├── App.jsx              # Main app component with routing
 ├── App.css
-├── index.css             # Global styles
-└── main.jsx              # App entry point
+├── index.css            # Global styles
+└── main.jsx             # App entry point
 ```
 
 ## Getting Started
@@ -56,7 +63,7 @@ src/
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd rapid-aid-matcher
+   cd Shellhacks_2025
    ```
 
 2. Install dependencies:
@@ -86,18 +93,27 @@ The frontend is designed to work with a FastAPI backend. Update the API endpoint
 
 - `POST /api/requests` - Submit new aid request
 - `GET /api/requests` - Fetch all aid requests (with optional filtering)
+- `PATCH /api/requests/{id}/status` - Update request status (claim/unclaim/complete)
 
-### Request Data Structure
+### Request Submission Data Structure
 
 ```json
 {
-  "name": "John Doe (optional)",
+  "name": "John Doe",
   "location": "123 Main St, City, State",
   "request_text": "Need food and water for family of 4"
 }
 ```
 
-### Response Data Structure
+**Notes for API Team:**
+- `name` field is optional (can be null/empty for anonymous requests)
+- `location` field is required
+- `request_text` field is required
+- Backend should auto-assign `category` using AI classification
+- Backend should auto-assign `status: "unclaimed"` for new requests
+- Backend should auto-assign `created_at` timestamp
+
+### Request Response Data Structure
 
 ```json
 {
@@ -106,9 +122,32 @@ The frontend is designed to work with a FastAPI backend. Update the API endpoint
   "location": "123 Main St, City, State",
   "request_text": "Need food and water for family of 4",
   "category": "food",
+  "status": "unclaimed",
   "created_at": "2024-01-15T10:30:00Z"
 }
 ```
+
+### Status Update Data Structure
+
+```json
+{
+  "status": "claimed"
+}
+```
+
+**Valid Status Values:**
+- `"unclaimed"` - New request needing a responder
+- `"claimed"` - Request being worked on by a responder  
+- `"completed"` - Request has been fulfilled
+
+### Category Values
+
+Backend AI should classify requests into these categories:
+- `"food"` - Food and nutrition needs
+- `"water"` - Clean water and hydration
+- `"shelter"` - Housing and temporary shelter
+- `"medical"` - Healthcare and medical supplies
+- `"other"` - Everything else
 
 ## Component Documentation
 
@@ -117,20 +156,47 @@ Navigation component with links to Submit Request and Dashboard pages.
 
 ### RequestForm
 Form component for submitting aid requests. Includes validation and loading states.
+- Sends POST request to `/api/requests`
+- Handles form validation (required: location, request_text)
+- Name field is optional
 
-### RequestList
-Displays list of requests with filtering by category and sorting options.
+### RequestList  
+Displays list of requests with filtering and sorting options.
+- **Category Filter**: All, Food, Water, Shelter, Medical, Other
+- **Status Filter**: All, Unclaimed, Claimed, Completed  
+- **Sort Options**: Newest First, Oldest First
+- Accepts `onStatusChange` callback for status updates
 
 ### RequestCard
-Individual request display with category badges, timestamps, and contact information.
+Individual request display with category badges, timestamps, contact info, and status actions.
+- Shows CategoryBadge and StatusBadge
+- **Action Buttons**: 
+  - Unclaimed requests: "Claim Request" button
+  - Claimed requests: "Mark Complete" and "Unclaim" buttons  
+  - Completed requests: "✓ Request fulfilled" indicator
+- Calls `onStatusChange(requestId, newStatus)` when buttons are clicked
 
 ### CategoryBadge
 Reusable badge component for displaying request categories with color coding:
 - Food: Green
-- Water: Blue
+- Water: Blue  
 - Shelter: Purple
 - Medical: Red
 - Other: Gray
+
+### StatusBadge
+New component for displaying request status with color coding:
+- Unclaimed: Passive yellow
+- Claimed: Light blue
+- Completed: Green
+- Unknown: Gray
+
+### DashboardPage
+Main dashboard with analytics and request management:
+- **Response Status Statistics**: Shows unclaimed, claimed, completed counts and completion rate
+- Handles status updates via `handleStatusChange()` function
+- Sends PATCH requests to `/api/requests/{id}/status`
+- Updates local state optimistically (works even if API call fails)
 
 ## Styling Approach
 
