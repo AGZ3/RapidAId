@@ -1,0 +1,122 @@
+.request-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.request-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.request-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.request-card-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.request-card-timestamp {
+  font-size: 12px;
+  color: #718096;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.request-card-content {
+  margin-bottom: 16px;
+}
+
+.request-text {
+  color: #2d3748;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 15px;
+}
+
+.request-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid #f7fafc;
+}
+
+.request-info {
+  flex: 1;
+}
+
+.request-name,
+.request-location {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+.info-label {
+  color: #718096;
+  font-weight: 600;
+  margin-right: 8px;
+  min-width: 60px;
+}
+
+.info-value {
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.request-id {
+  font-size: 11px;
+  color: #a0aec0;
+  font-weight: 500;
+  align-self: flex-end;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .request-card {
+    padding: 16px;
+  }
+  
+  .request-card-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  
+  .request-card-timestamp {
+    align-self: flex-end;
+  }
+  
+  .request-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .request-id {
+    align-self: flex-end;
+  }
+}
+
+/* Urgent requests highlight */
+.request-card.urgent {
+  border-left: 4px solid #f56565;
+  background: linear-gradient(to right, #fed7d7, white);
+}
+
+.request-card.urgent .request-card-header::before {
+  content: '🚨';
+  margin-right: 8px;
+}

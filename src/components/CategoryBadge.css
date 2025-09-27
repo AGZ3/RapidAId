@@ -1,0 +1,57 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-food {
+  background-color: #c6f6d5;
+  color: #22543d;
+  border: 1px solid #9ae6b4;
+}
+
+.badge-water {
+  background-color: #bee3f8;
+  color: #2a4365;
+  border: 1px solid #90cdf4;
+}
+
+.badge-shelter {
+  background-color: #e9d8fd;
+  color: #44337a;
+  border: 1px solid #d6bcfa;
+}
+
+.badge-medical {
+  background-color: #fed7d7;
+  color: #742a2a;
+  border: 1px solid #fc8181;
+}
+
+.badge-other {
+  background-color: #e2e8f0;
+  color: #2d3748;
+  border: 1px solid #cbd5e0;
+}
+
+/* Hover effects */
+.badge:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+/* Size variants */
+.badge-small {
+  padding: 2px 8px;
+  font-size: 10px;
+}
+
+.badge-large {
+  padding: 6px 16px;
+  font-size: 14px;
+}
