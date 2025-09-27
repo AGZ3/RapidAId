@@ -77,20 +77,20 @@ const DashboardPage = () => {
   const fetchRequests = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // TODO: Replace with actual API call
       const response = await fetch('/api/requests');
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch requests');
       }
-      
+
       const data = await response.json();
       setRequests(data);
     } catch (err) {
       console.error('Error fetching requests:', err);
-      
+
       // For development: Use mock data if API is not available
       console.warn('API not available, using mock data');
       setRequests(mockRequests);
@@ -115,9 +115,9 @@ const DashboardPage = () => {
       }
 
       // For development: Update local state
-      setRequests(prevRequests => 
-        prevRequests.map(request => 
-          request.id === requestId 
+      setRequests(prevRequests =>
+        prevRequests.map(request =>
+          request.id === requestId
             ? { ...request, status: newStatus }
             : request
         )
@@ -126,11 +126,11 @@ const DashboardPage = () => {
       console.log(`Request ${requestId} status updated to: ${newStatus}`);
     } catch (err) {
       console.error('Error updating request status:', err);
-      
+
       // For development: Still update local state even if API fails
-      setRequests(prevRequests => 
-        prevRequests.map(request => 
-          request.id === requestId 
+      setRequests(prevRequests =>
+        prevRequests.map(request =>
+          request.id === requestId
             ? { ...request, status: newStatus }
             : request
         )
@@ -149,17 +149,17 @@ const DashboardPage = () => {
       acc[category] = (acc[category] || 0) + 1;
       return acc;
     }, {});
-    
+
     const statusCounts = requests.reduce((acc, request) => {
       const status = request.status || 'unclaimed';
       acc[status] = (acc[status] || 0) + 1;
       return acc;
     }, {});
-    
+
     const uniqueLocations = new Set(
       requests.map(r => r.location?.split(',')[1]?.trim()).filter(Boolean)
     ).size;
-    
+
     return {
       totalRequests,
       categoryCounts,
@@ -178,9 +178,9 @@ const DashboardPage = () => {
             <h1>Responder Dashboard</h1>
             <p>View and respond to aid requests in your area</p>
           </div>
-          
+
           <div className="dashboard-actions">
-            <button 
+            <button
               className="btn btn-primary refresh-btn"
               onClick={fetchRequests}
               disabled={isLoading}
@@ -201,17 +201,17 @@ const DashboardPage = () => {
                 <div className="stat-number">{stats.statusCounts.unclaimed || 0}</div>
                 <div className="stat-label">Needs Help</div>
               </div>
-              
+
               <div className="stat-card progress">
                 <div className="stat-number">{stats.statusCounts.claimed || 0}</div>
                 <div className="stat-label">In Progress</div>
               </div>
-              
+
               <div className="stat-card completed">
                 <div className="stat-number">{stats.statusCounts.completed || 0}</div>
                 <div className="stat-label">Completed</div>
               </div>
-              
+
               <div className="stat-card">
                 <div className="stat-number">{Math.round(((stats.statusCounts.completed || 0) / stats.totalRequests) * 100) || 0}%</div>
                 <div className="stat-label">Completion Rate</div>
@@ -237,7 +237,7 @@ const DashboardPage = () => {
           <div className="info-card">
             <h3>For Responders</h3>
             <p>
-              To respond to a request, contact the requester directly using the provided information. 
+              To respond to a request, contact the requester directly using the provided information.
               For coordination with other responders, use your organization's standard communication channels.
             </p>
           </div>

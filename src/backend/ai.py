@@ -18,10 +18,6 @@ TAG_MAP = {
     "food": ["food"],
     "shelter": ["shelter"],
     "medical": ["medical"],
-    "rescue": ["rescue"],
-    "power": ["power"],
-    "transport": ["transport"],
-    "info": ["info"],
     "other": ["other"]
 }
 
@@ -32,7 +28,7 @@ Convert the user message below into JSON with exactly these keys:
 title, need_type, priority_score, tags, notes.
 
 Rules:
-- need_type must be one of ["water","food","shelter","medical","rescue","power","transport","info","other"]
+- need_type must be one of ["water","food","shelter","medical","other"]
 - priority_score 0-100 (higher = more urgent)
 - tags must include the need_type. Include "urgent" only if the message indicates urgency.
 - notes is the original message
@@ -83,6 +79,7 @@ Return only JSON.
                 tags.append("urgent")
 
         data["tags"] = tags
+        print(data)
 
         return data
 
