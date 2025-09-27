@@ -6,49 +6,49 @@ import google.generativeai as genai
 # Load .env file
 load_dotenv()
 
-# Configure Google AI Studio
-API_KEY = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key=API_KEY)
+# Client automatically picks up GEMINI_API_KEY
+client = genai.Client()
 
 VALID_CATEGORIES = ["all", "food", "water", "shelter", "medical", "other"]
+DEFAULT_STATUS = "unclaimed"
 
 
-def categorize_request(text: str) -> str:
+def categorize_request(text: str) -> dict:
     """
-    Use Google Vertex AI (Gemini) to classify a disaster relief request
-    into one of the valid categories.
-
+    Classify a disaster relief request into one of the valid categories.
+    Always returns both category and a default status ("unclaimed").
+    
     Args:
         text (str): The user request message
-
+    
     Returns:
-        str: One of ["All", "Food", "Water", "Shelter", "Medical", "Other"]
+        dict: { "category": str, "status": str }
     """
 
-    prompt = f"""
-    Classify the following disaster relief request into exactly one category.
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=f"""
+        Classify the following disaster relief request into exactly one category.
 
-    Categories:
-    - Food: meals, groceries, hunger, no food, supplies to eat
-    - Water: bottled water, drinking water, dehydration, no clean water
-    - Shelter: housing, place to stay, tent, roof, flood damage, homelessness
-    - Medical: injury, medicine, hospital, doctor, urgent health need
-    - Other: anything not listed above
-    - All: if the request is too vague and you cannot assign a category
+        Categories:
+        - food: meals, groceries, hunger, no food, supplies to eat
+        - water: bottled water, drinking water, dehydration, no clean water
+        - shelter: housing, place to stay, tent, roof, flood damage, homelessness
+        - medical: injury, medicine, hospital, doctor, urgent health need
+        - other: anything not listed above
+        - all: if the request is too vague and you cannot assign a category
 
-    Request: "{text}"
+        Request: "{text}"
 
-    Return only the category name, nothing else.
-    """
+        Return only the category name in lowercase, nothing else.
+        """
+    )
 
-    try:
-        response = model.generate_content(prompt)
-        category = response.candidates[0].content.parts[0].text.strip().capitalize()
+    category = response.text.strip().lower()
+    if category not in VALID_CATEGORIES:
+        category = "other"
 
-        if category not in ["All", "Food", "Water", "Shelter", "Medical", "Other"]:
-            return "Other"
-
-        return category
-
-    except Exception:
-        return "Other"
+    return {
+        "category": category,
+        "status": DEFAULT_STATUS  # frontend now expects this
+    }
