@@ -7,7 +7,7 @@ A React-based frontend for the Rapid Aid Matcher disaster relief application. Th
 - **Submit Aid Requests**: Users can submit requests with their location and aid needs
 - **Responder Dashboard**: View categorized aid requests with filtering, sorting, and status management
 - **Request Status System**: Track requests through unclaimed → claimed → completed workflow
-- **AI-Powered Categorization**: Backend AI categorizes requests (Food, Water, Shelter, Medical, Other)
+- **AI-Powered Categorization**: Gemini 2.0 Flash AI categorizes requests (Food, Water, Shelter, Medical, Other)
 - **Status-based Analytics**: Dashboard shows response progress and completion metrics
 - **Mobile-Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Clean Component Architecture**: Reusable, maintainable React components
@@ -71,12 +71,22 @@ src/
    npm install
    ```
 
-3. Start the development server:
+3. Set up Gemini AI integration:
+   ```bash
+   cp .env.example .env
+   ```
+   - Get your Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Add your API key to the `.env` file:
+     ```
+     VITE_GEMINI_API_KEY=your_actual_api_key_here
+     ```
+
+4. Start the development server:
    ```bash
    npm run dev
    ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+5. Open your browser and navigate to `http://localhost:5173`
 
 ## Available Scripts
 
@@ -85,69 +95,60 @@ src/
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
-## API Integration
+## AI Integration
 
-The frontend is designed to work with a FastAPI backend. Update the API endpoints in the components:
+This application uses **Gemini 2.0 Flash** for real-time request categorization directly in the frontend.
 
-### Expected API Endpoints
+### How It Works
 
-- `POST /api/requests` - Submit new aid request
-- `GET /api/requests` - Fetch all aid requests (with optional filtering)
-- `PATCH /api/requests/{id}/status` - Update request status (claim/unclaim/complete)
+1. **Form Submission**: Users submit aid requests through the form
+2. **AI Processing**: Gemini AI analyzes the request text in real-time
+3. **Categorization**: AI automatically categorizes requests into predefined categories
+4. **Console Output**: Detailed processing information is logged to browser console for testing
 
-### Request Submission Data Structure
+### Request Data Structure
 
-```json
-{
-  "name": "John Doe",
-  "location": "123 Main St, City, State",
-  "request_text": "Need food and water for family of 4"
-}
-```
-
-**Notes for API Team:**
-- `name` field is optional (can be null/empty for anonymous requests)
-- `location` field is required
-- `request_text` field is required
-- Backend should auto-assign `category` using AI classification
-- Backend should auto-assign `status: "unclaimed"` for new requests
-- Backend should auto-assign `created_at` timestamp
-
-### Request Response Data Structure
+When a request is processed, it creates the following data structure:
 
 ```json
 {
-  "id": 1,
+  "id": "1735123456789",
   "name": "John Doe",
   "location": "123 Main St, City, State",
   "request_text": "Need food and water for family of 4",
   "category": "food",
-  "status": "unclaimed",
-  "created_at": "2024-01-15T10:30:00Z"
+  "status": "pending",
+  "created_at": "2024-12-25T15:30:45.123Z"
 }
 ```
 
-### Status Update Data Structure
+### Field Descriptions
 
-```json
-{
-  "status": "claimed"
-}
-```
+- **`id`**: Unique timestamp-based identifier
+- **`name`**: Requester's name (optional, defaults to "Anonymous")
+- **`location`**: Required location information
+- **`request_text`**: Required description of aid needed
+- **`category`**: AI-generated category (food, water, shelter, medical, other)
+- **`status`**: Always "pending" for new requests
+- **`created_at`**: ISO timestamp of request creation
 
-**Valid Status Values:**
-- `"unclaimed"` - New request needing a responder
-- `"claimed"` - Request being worked on by a responder  
-- `"completed"` - Request has been fulfilled
+### AI Categories
 
-### Category Values
+Gemini AI classifies requests into these categories:
+- **`food`** - Food and nutrition needs
+- **`water`** - Clean water and hydration
+- **`shelter`** - Housing and temporary shelter
+- **`medical`** - Healthcare and medical supplies
+- **`other`** - Everything else
 
-Backend AI should classify requests into these categories:
-- `"food"` - Food and nutrition needs
-- `"water"` - Clean water and hydration
-- `"shelter"` - Housing and temporary shelter
-- `"medical"` - Healthcare and medical supplies
-- `"other"` - Everything else
+### Testing the AI Integration
+
+1. Open browser DevTools (F12) and go to Console tab
+2. Submit test requests through the form
+3. Watch the detailed AI processing logs
+4. Verify categorization accuracy
+
+For comprehensive testing guidelines, see `GEMINI_INTEGRATION.md`.
 
 ## Component Documentation
 
