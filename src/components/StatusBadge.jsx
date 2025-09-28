@@ -19,6 +19,12 @@ const StatusBadge = ({ status }) => {
           text: 'Completed',
           className: 'status-completed'
         };
+      case 'pending':
+        // Backward compatibility - treat 'pending' as 'unclaimed'
+        return {
+          text: 'Unclaimed',
+          className: 'status-unclaimed'
+        };
       default:
         return {
           text: 'Unknown',

@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import databaseService from './databaseService.js';
 
 class GeminiService {
   constructor() {
@@ -68,7 +69,7 @@ Based on the request text, respond with ONLY the category name (medical, food, s
         location: location,
         request_text: request_text,
         category: finalCategory,
-        status: 'pending',
+        status: 'unclaimed',
         created_at: new Date().toISOString()
       };
 
@@ -84,6 +85,15 @@ Based on the request text, respond with ONLY the category name (medical, food, s
       console.log(`📅 Created: ${processedRequest.created_at}`);
       console.log('================================');
 
+      // Save to database
+      try {
+        await databaseService.addRequest(processedRequest);
+        console.log('💾 Request saved to database successfully');
+      } catch (dbError) {
+        console.error('❌ Failed to save request to database:', dbError);
+        // Don't throw here - we still want to return the processed request
+      }
+
       return processedRequest;
       
     } catch (error) {
@@ -96,7 +106,7 @@ Based on the request text, respond with ONLY the category name (medical, food, s
         location: location,
         request_text: request_text,
         category: 'other',
-        status: 'pending',
+        status: 'unclaimed',
         created_at: new Date().toISOString(),
         error: 'AI categorization failed, using fallback category'
       };
@@ -112,6 +122,14 @@ Based on the request text, respond with ONLY the category name (medical, food, s
       console.log(`📅 Created: ${fallbackRequest.created_at}`);
       console.log(`❌ Error: ${fallbackRequest.error}`);
       console.log('================================');
+
+      // Still save fallback request to database
+      try {
+        await databaseService.addRequest(fallbackRequest);
+        console.log('💾 Fallback request saved to database');
+      } catch (dbError) {
+        console.error('❌ Failed to save fallback request to database:', dbError);
+      }
 
       throw error;
     }

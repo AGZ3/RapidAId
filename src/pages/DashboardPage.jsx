@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import RequestList from '../components/RequestList.jsx';
+import databaseService from '../services/databaseService.js';
 import './DashboardPage.css';
 
 const DashboardPage = () => {
@@ -74,26 +75,50 @@ const DashboardPage = () => {
     }
   ];
 
+  // Helper function to sort requests: completed at bottom, then by date
+  const sortRequestsByStatusAndDate = (requests) => {
+    return [...requests].sort((a, b) => {
+      // First, separate completed from non-completed
+      const aCompleted = a.status === 'completed';
+      const bCompleted = b.status === 'completed';
+      
+      if (aCompleted && !bCompleted) return 1;  // a (completed) goes after b (non-completed)
+      if (!aCompleted && bCompleted) return -1; // a (non-completed) goes before b (completed)
+      
+      // If both have same completion status, sort by date (newest first)
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+  };
+
   const fetchRequests = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // TODO: Replace with actual API call
-      const response = await fetch('/api/requests');
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch requests');
-      }
-
-      const data = await response.json();
-      setRequests(data);
+      console.log('📋 Fetching requests from database...');
+      
+      // Initialize database if needed
+      await databaseService.initialize();
+      
+      // Migrate any existing 'pending' status to 'unclaimed' for consistency
+      await databaseService.migratePendingToUnclaimed();
+      
+      // Get all requests from IndexedDB
+      const data = await databaseService.getAllRequests();
+      
+      console.log(`✅ Loaded ${data.length} requests from database`);
+      
+      // Apply custom sorting: completed requests at bottom
+      const sortedData = sortRequestsByStatusAndDate(data);
+      
+      // Show only real database data
+      setRequests(sortedData);
     } catch (err) {
-      console.error('Error fetching requests:', err);
-
-      // For development: Use mock data if API is not available
-      console.warn('API not available, using mock data');
-      setRequests(mockRequests);
+      console.error('❌ Error fetching requests from database:', err);
+      
+      // Show error but don't fallback to mock data
+      setRequests([]);
+      setError('Failed to load requests from database. Use "Add Sample Data" to populate with test data.');
     } finally {
       setIsLoading(false);
     }
@@ -101,40 +126,39 @@ const DashboardPage = () => {
 
   const handleStatusChange = async (requestId, newStatus) => {
     try {
-      // TODO: Replace with actual API call
-      const response = await fetch(`/api/requests/${requestId}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus })
+      console.log(`🔄 Updating request ${requestId} status to: ${newStatus}`);
+      
+      // Update status in database
+      const updatedRequest = await databaseService.updateRequestStatus(requestId, newStatus);
+      
+      // Update local state with the updated request and re-sort
+      setRequests(prevRequests => {
+        const updatedRequests = prevRequests.map(request =>
+          request.id === requestId
+            ? updatedRequest
+            : request
+        );
+        
+        // Re-sort to ensure completed requests stay at bottom
+        return sortRequestsByStatusAndDate(updatedRequests);
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to update request status');
-      }
-
-      // For development: Update local state
-      setRequests(prevRequests =>
-        prevRequests.map(request =>
-          request.id === requestId
-            ? { ...request, status: newStatus }
-            : request
-        )
-      );
-
-      console.log(`Request ${requestId} status updated to: ${newStatus}`);
+      console.log(`✅ Request ${requestId} status successfully updated to: ${newStatus}`);
     } catch (err) {
-      console.error('Error updating request status:', err);
+      console.error('❌ Error updating request status:', err);
+      setError(`Failed to update request status: ${err.message}`);
 
-      // For development: Still update local state even if API fails
-      setRequests(prevRequests =>
-        prevRequests.map(request =>
+      // Still update local state for UI responsiveness and re-sort
+      setRequests(prevRequests => {
+        const updatedRequests = prevRequests.map(request =>
           request.id === requestId
             ? { ...request, status: newStatus }
             : request
-        )
-      );
+        );
+        
+        // Re-sort to ensure completed requests stay at bottom
+        return sortRequestsByStatusAndDate(updatedRequests);
+      });
     }
   };
 
@@ -186,6 +210,60 @@ const DashboardPage = () => {
               disabled={isLoading}
             >
               {isLoading ? 'Loading...' : 'Refresh Data'}
+            </button>
+            
+            {/* Development Controls */}
+            <button
+              className="btn btn-secondary"
+              onClick={async () => {
+                if (confirm('Clear all requests from database? This cannot be undone.')) {
+                  try {
+                    await databaseService.clearAllRequests();
+                    await fetchRequests();
+                  } catch (err) {
+                    console.error('Failed to clear database:', err);
+                  }
+                }
+              }}
+              style={{ marginLeft: '10px' }}
+            >
+              Clear Database
+            </button>
+            
+            <button
+              className="btn btn-secondary"
+              onClick={async () => {
+                try {
+                  console.log('📝 Adding sample requests with delays...');
+                  
+                  // Add sample requests to database for testing
+                  const sampleRequests = mockRequests.map((req, index) => ({
+                    ...req,
+                    id: `sample_${Date.now()}_${req.id}`,
+                    created_at: new Date(Date.now() + index * 1000).toISOString() // Stagger timestamps
+                  }));
+                  
+                  // Add requests with delay between each one
+                  for (let i = 0; i < sampleRequests.length; i++) {
+                    const request = sampleRequests[i];
+                    await databaseService.addRequest(request);
+                    console.log(`✅ Added sample request ${i + 1}/${sampleRequests.length}: ${request.name || 'Anonymous'}`);
+                    
+                    // Add 300ms delay between requests (except for the last one)
+                    if (i < sampleRequests.length - 1) {
+                      await new Promise(resolve => setTimeout(resolve, 300));
+                    }
+                  }
+                  
+                  console.log(`🎉 Successfully added all ${sampleRequests.length} sample requests to database`);
+                  await fetchRequests();
+                } catch (err) {
+                  console.error('Failed to add sample data:', err);
+                }
+              }}
+              style={{ marginLeft: '10px' }}
+            >
+              Add Sample Data
             </button>
           </div>
         </div>

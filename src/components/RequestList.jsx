@@ -21,6 +21,14 @@ const RequestList = ({ requests, isLoading, error, onStatusChange }) => {
   }) || [];
 
   const sortedRequests = [...filteredRequests].sort((a, b) => {
+    // First, always keep completed requests at bottom regardless of sort preference
+    const aCompleted = a.status === 'completed';
+    const bCompleted = b.status === 'completed';
+    
+    if (aCompleted && !bCompleted) return 1;  // a (completed) goes after b (non-completed)
+    if (!aCompleted && bCompleted) return -1; // a (non-completed) goes before b (completed)
+    
+    // Within each status group, apply the selected sort
     switch (sortBy) {
       case 'newest':
         return new Date(b.created_at || 0) - new Date(a.created_at || 0);

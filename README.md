@@ -35,7 +35,7 @@ src/
 │   ├── RequestCard.css
 │   ├── CategoryBadge.jsx # Category display badge (medical, food, shelter, water, other)
 │   ├── CategoryBadge.css
-│   ├── StatusBadge.jsx   # Request status badge (pending/unclaimed/claimed/completed)
+│   ├── StatusBadge.jsx   # Request status badge (unclaimed/claimed/completed)
 │   └── StatusBadge.css
 ├── pages/                # Page components
 │   ├── SubmitRequestPage.jsx    # Submit request page with AI categorization
@@ -138,7 +138,7 @@ When a request is processed, it creates the following data structure:
   "location": "123 Main St, City, State",
   "request_text": "Need food and water for family of 4",
   "category": "food",
-  "status": "pending",
+  "status": "unclaimed",
   "created_at": "2024-12-25T15:30:45.123Z"
 }
 ```
@@ -150,7 +150,7 @@ When a request is processed, it creates the following data structure:
 - **`location`**: Required location information
 - **`request_text`**: Required description of aid needed
 - **`category`**: AI-generated category (food, water, shelter, medical, other)
-- **`status`**: Always "pending" for new requests
+- **`status`**: Always "unclaimed" for new requests
 - **`created_at`**: ISO timestamp of request creation
 
 ### AI Categories
