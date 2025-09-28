@@ -30,7 +30,7 @@ const DashboardPage = () => {
     },
     {
       id: 3,
-      name: null,
+      name: 'Anonymous',
       location: '890 Pine St, Orlando, FL',
       request_text: 'Shelter needed for tonight. House is flooded.',
       category: 'shelter',

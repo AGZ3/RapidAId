@@ -19,18 +19,35 @@ const RequestCard = ({ request, onStatusChange }) => {
     }
   };
 
+  const handleDirections = () => {
+    if (request.location) {
+      const encodedAddress = encodeURIComponent(request.location);
+      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
+      window.open(googleMapsUrl, '_blank');
+    }
+  };
+
   const getStatusActions = () => {
     const status = request.status?.toLowerCase();
     
     switch (status) {
       case 'unclaimed':
         return (
-          <button 
-            className="btn btn-primary btn-sm"
-            onClick={() => handleStatusChange('claimed')}
-          >
-            Claim Request
-          </button>
+          <div className="status-actions">
+            <button 
+              className="btn btn-primary btn-sm"
+              onClick={() => handleStatusChange('claimed')}
+            >
+              Claim Request
+            </button>
+            <button 
+              className="btn btn-outline btn-sm directions-btn"
+              onClick={handleDirections}
+              title="Get directions to this location"
+            >
+              📍 Directions
+            </button>
+          </div>
         );
       case 'claimed':
         return (
@@ -46,6 +63,13 @@ const RequestCard = ({ request, onStatusChange }) => {
               onClick={() => handleStatusChange('unclaimed')}
             >
               Unclaim
+            </button>
+            <button 
+              className="btn btn-outline btn-sm directions-btn"
+              onClick={handleDirections}
+              title="Get directions to this location"
+            >
+              📍 Directions
             </button>
           </div>
         );
