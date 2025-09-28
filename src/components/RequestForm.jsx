@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './RequestForm.css';
 import geminiService from '../services/geminiService';
 
@@ -26,7 +27,7 @@ const RequestForm = ({ onSubmitSuccess }) => {
     setSuccess(false);
 
     if (!formData.request_text.trim() || !formData.location.trim()) {
-      setError('Please fill in all required fields');
+      setError(t('requiredFields'));
       return;
     }
 
@@ -68,29 +69,31 @@ const RequestForm = ({ onSubmitSuccess }) => {
     }
   };
 
+  const { t } = useTranslation();
+
   return (
     <div className="request-form-container">
       <div className="request-form-header">
-        <h2>Submit Aid Request</h2>
-        <p>Please provide details about the aid you need. Our system will categorize and prioritize your request.</p>
+        <h2>{t('submitAidTitle')}</h2>
+        <p>{t('submitAidDescription')}</p>
       </div>
 
       {success && (
         <div className="alert alert-success">
-          <strong>Success!</strong> Your request has been submitted successfully.
+          {t('successSubmitted')}
         </div>
       )}
 
       {error && (
         <div className="alert alert-error">
-          <strong>Error:</strong> {error}
+          <strong>{t('error')}:</strong> {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="request-form">
         <div className="form-group">
           <label htmlFor="name" className="form-label">
-            Your Name (Optional)
+            {t('name')}
           </label>
           <input
             type="text"
@@ -99,14 +102,14 @@ const RequestForm = ({ onSubmitSuccess }) => {
             value={formData.name}
             onChange={handleChange}
             className="form-input"
-            placeholder="Enter your name"
+            placeholder={t('placeholders.name')}
             disabled={isSubmitting}
           />
         </div>
 
         <div className="form-group">
           <label htmlFor="location" className="form-label">
-            Location <span className="required">*</span>
+            {t('location')} <span className="required">*</span>
           </label>
           <input
             type="text"
@@ -116,17 +119,17 @@ const RequestForm = ({ onSubmitSuccess }) => {
             onChange={handleChange}
             required
             className="form-input"
-            placeholder="Enter your location (e.g., 123 Main St, City, State)"
+            placeholder={t('placeholders.location')}
             disabled={isSubmitting}
           />
           <small className="form-hint">
-            Provide as specific a location as possible for faster response
+            {t('hints.location')}
           </small>
         </div>
 
         <div className="form-group">
           <label htmlFor="request_text" className="form-label">
-            Request Details <span className="required">*</span>
+            {t('requestDetails')} <span className="required">*</span>
           </label>
           <textarea
             id="request_text"
@@ -136,11 +139,11 @@ const RequestForm = ({ onSubmitSuccess }) => {
             onChange={handleChange}
             required
             className="form-textarea"
-            placeholder="Describe what kind of aid you need (food, water, medical supplies, shelter, etc.)..."
+            placeholder={t('placeholders.requestDetails')}
             disabled={isSubmitting}
           />
           <small className="form-hint">
-            Be as specific as possible. Include quantities, urgency level, and any special requirements.
+            {t('hints.requestDetails')}
           </small>
         </div>
 
@@ -153,10 +156,10 @@ const RequestForm = ({ onSubmitSuccess }) => {
             {isSubmitting ? (
               <>
                 <span className="loading-spinner-small"></span>
-                Submitting...
+                {t('submitting')}
               </>
             ) : (
-              'Submit Request'
+              t('submit')
             )}
           </button>
         </div>
@@ -165,8 +168,7 @@ const RequestForm = ({ onSubmitSuccess }) => {
       <div className="emergency-notice">
         <div className="emergency-icon">⚠️</div>
         <div className="emergency-text">
-          <strong>Emergency Notice:</strong> If this is a life-threatening emergency, please call 911 immediately.
-          This system is for non-emergency aid coordination.
+          <strong>{t('emergency.title')}</strong> {t('emergency.text')}
         </div>
       </div>
     </div>

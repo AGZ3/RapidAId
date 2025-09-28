@@ -6,246 +6,114 @@ A React-based frontend for the Rapid Aid Matcher disaster relief application. Th
 
 - **Submit Aid Requests**: Users can submit requests with their location and aid needs
 - **Responder Dashboard**: View categorized aid requests with filtering, sorting, and status management
-- **Request Status System**: Track requests through unclaimed → claimed → completed workflow
-- **AI-Powered Categorization**: Gemini 2.0 Flash AI categorizes requests (Food, Water, Shelter, Medical, Other)
-- **Status-based Analytics**: Dashboard shows response progress and completion metrics
-- **Mobile-Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Clean Component Architecture**: Reusable, maintainable React components
+# RapidAid
 
-## Technology Stack
+RapidAid is a Vite + React frontend for coordinating non-emergency aid requests. Users can submit requests with location and details, and responders can view and manage requests via the dashboard.
 
-- **Framework**: React 18 with functional components and hooks
-- **Routing**: React Router v6
-- **Styling**: Plain CSS with CSS Modules approach
-- **Build Tool**: Vite
-- **Package Manager**: npm
+This README was updated to reflect the current state of the repository (September 2025): maps were removed, i18n (English/Spanish) was added, and dependency conflicts with mapping libraries were resolved by removing them.
 
-## Project Structure
+## Highlights
+
+- Submit and categorize aid requests (AI categorization via Gemini)
+- Responder dashboard with filtering, sorting and status management
+- Multi-language UI (English and Spanish) via `react-i18next`
+- No map integration in the current branch (map components were removed)
+
+## Tech stack
+
+- React 19
+- React Router v7
+- Vite (dev server + build)
+- i18next / react-i18next for translations
+- Plain CSS for component styling
+- Node / npm
+
+## Quick start
+
+1. Clone the repo:
+
+```powershell
+git clone <repository-url>
+cd Shellhacks_2025
+```
+
+2. Install dependencies:
+
+```powershell
+npm install
+```
+
+If you see peer dependency errors related to optional mapping libraries in an earlier branch, they were removed in this branch — run npm install again after pulling latest changes.
+
+3. Set up your Gemini API key (optional, used for AI categorization):
+
+Create a `.env` file in the project root with:
+
+```text
+VITE_GEMINI_API_KEY=your_api_key_here
+```
+
+4. Start dev server:
+
+```powershell
+npm run dev
+```
+
+Open the URL printed by Vite (usually http://localhost:5173 or similar).
+
+## Scripts
+
+- `npm run dev` — start Vite dev server
+- `npm run build` — build for production
+- `npm run preview` — preview production build
+- `npm run lint` — run ESLint
+
+## Localization
+
+The app uses `react-i18next` with translation files in `src/locales`.
+- Default languages included: English (`en.json`) and Spanish (`es.json`).
+
+To add strings or languages, update `src/locales/*.json` and the i18n initialization in `src/i18n.js`.
+
+## Gemini AI
+
+The app integrates with Gemini for automatic request categorization. Gemini is used in `src/services/geminiService.js`.
+
+Environment variable required (if you want categorization):
+
+ - `VITE_GEMINI_API_KEY` — Gemini API key
+
+If you don't set an API key the UI will still work; AI categorization calls will fail gracefully and the project stores requests locally.
+
+## Notes about maps
+
+- Mapping components (Leaflet / react-leaflet / GoogleMapPanel) were removed from this branch to avoid dependency conflicts and to simplify the UI.
+- If you want map functionality back, we recommend adding a standalone feature branch and installing mapping dependencies compatible with React 19 (or using a vanilla JS integration that avoids react-leaflet's peer deps).
+
+## Project structure (short)
 
 ```
 src/
-├── components/           # Reusable UI components
-│   ├── Header.jsx        # Navigation header
-│   ├── Header.css
-│   ├── RequestForm.jsx   # AI-powered request submission form with Gemini integration
-│   ├── RequestForm.css
-│   ├── RequestList.jsx   # List of aid requests with filtering
-│   ├── RequestList.css
-│   ├── RequestCard.jsx   # Individual request display with status actions
-│   ├── RequestCard.css
-│   ├── CategoryBadge.jsx # Category display badge (medical, food, shelter, water, other)
-│   ├── CategoryBadge.css
-│   ├── StatusBadge.jsx   # Request status badge (unclaimed/claimed/completed)
-│   └── StatusBadge.css
-├── pages/                # Page components
-│   ├── SubmitRequestPage.jsx    # Submit request page with AI categorization
-│   ├── SubmitRequestPage.css
-│   ├── DashboardPage.jsx        # Responder dashboard with status analytics
-│   └── DashboardPage.css
-├── services/            # Business logic and API integration
-│   └── geminiService.js  # Gemini 2.0 Flash AI service for request categorization
-├── assets/              # Static assets
-│   ├── logo.png
-│   └── react.svg
-├── App.jsx              # Main app component with routing
-├── App.css
-├── index.css            # Global styles
-└── main.jsx             # App entry point
+├─ components/      # Header, RequestForm, RequestList, RequestCard, badges
+├─ pages/           # SubmitRequestPage, DashboardPage
+├─ services/        # geminiService, databaseService
+├─ locales/         # i18n JSON files
+├─ App.jsx
+└─ main.jsx
 ```
 
-## Key Components
+## Troubleshooting
 
-### RequestForm.jsx
-- **Primary Function**: AI-powered request submission with real-time categorization
-- **Integration**: Direct Gemini 2.0 Flash API integration (no server required)
-- **Features**: Form validation, error handling, console logging for testing
-- **Output**: Processes requests with AI categorization and timestamps
+- npm install errors: ensure you're on a recent Node version and that you pulled the latest branch where mapping deps were removed. If errors persist paste the install output here and I can help.
+- Dev server errors: open the terminal where `npm run dev` runs — Vite will print file and line numbers for compile errors.
 
-### GeminiService.js
-- **Primary Function**: Manages Gemini AI API communication and request processing
-- **Features**: Environment variable configuration, error handling, fallback categorization
-- **Categories**: Automatically categorizes into medical, food, shelter, water, or other
-- **Testing**: Comprehensive console logging for development and debugging
+## Follow-ups I can do for you
 
-### Component Architecture
-- **Self-contained**: Each component manages its own state and styling
-- **Reusable**: Badge components for categories and status indicators
-- **Responsive**: Mobile-first design with CSS Grid and Flexbox
-- **Accessible**: Semantic HTML structure with proper ARIA labels
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (version 16 or higher)
-- npm
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd Shellhacks_2025
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Set up Gemini AI integration:
-
-   - Get your Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-   - Create a .env file under the main directory
-   - Add your API key to the `.env` file:
-     ```
-     VITE_GEMINI_API_KEY=your_actual_api_key_here
-     ```
-
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-5. Open your browser and navigate to `http://localhost:5173`
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-## AI Integration
-
-This application uses **Gemini 2.0 Flash** for real-time request categorization directly in the frontend.
-
-### How It Works
-
-1. **Form Submission**: Users submit aid requests through the form
-2. **AI Processing**: Gemini AI analyzes the request text in real-time
-3. **Categorization**: AI automatically categorizes requests into predefined categories
-4. **Console Output**: Detailed processing information is logged to browser console for testing
-
-### Request Data Structure
-
-When a request is processed, it creates the following data structure:
-
-```json
-{
-  "id": "1735123456789",
-  "name": "John Doe",
-  "location": "123 Main St, City, State",
-  "request_text": "Need food and water for family of 4",
-  "category": "food",
-  "status": "unclaimed",
-  "created_at": "2024-12-25T15:30:45.123Z"
-}
-```
-
-### Field Descriptions
-
-- **`id`**: Unique timestamp-based identifier
-- **`name`**: Requester's name (optional, defaults to "Anonymous")
-- **`location`**: Required location information
-- **`request_text`**: Required description of aid needed
-- **`category`**: AI-generated category (food, water, shelter, medical, other)
-- **`status`**: Always "unclaimed" for new requests
-- **`created_at`**: ISO timestamp of request creation
-
-### AI Categories
-
-Gemini AI classifies requests into these categories:
-- **`food`** - Food and nutrition needs
-- **`water`** - Clean water and hydration
-- **`shelter`** - Housing and temporary shelter
-- **`medical`** - Healthcare and medical supplies
-- **`other`** - Everything else
-
-## Component Documentation
-
-### Header
-Navigation component with links to Submit Request and Dashboard pages.
-
-### RequestForm
-Form component for submitting aid requests. Includes validation and loading states.
-- Calls Gemini API directly to process requests in JSON formatW
-- Handles form validation (required: location, request_text)
-- Name field is optional
-
-### RequestList  
-Displays list of requests with filtering and sorting options.
-- **Category Filter**: All, Food, Water, Shelter, Medical, Other
-- **Status Filter**: All, Unclaimed, Claimed, Completed  
-- **Sort Options**: Newest First, Oldest First
-- Accepts `onStatusChange` callback for status updates
-
-### RequestCard
-Individual request display with category badges, timestamps, contact info, and status actions.
-- Shows CategoryBadge and StatusBadge
-- **Action Buttons**: 
-  - Unclaimed requests: "Claim Request" button
-  - Claimed requests: "Mark Complete" and "Unclaim" buttons  
-  - Completed requests: "✓ Request fulfilled" indicator
-- Calls `onStatusChange(requestId, newStatus)` when buttons are clicked
-
-### CategoryBadge
-Reusable badge component for displaying request categories with color coding:
-- Food: Green
-- Water: Blue  
-- Shelter: Purple
-- Medical: Red
-- Other: Gray
-
-### StatusBadge
-New component for displaying request status with color coding:
-- Unclaimed: Passive yellow
-- Claimed: Light blue
-- Completed: Green
-- Unknown: Gray
-
-### DashboardPage
-Main dashboard with analytics and request management:
-- **Response Status Statistics**: Shows unclaimed, claimed, completed counts and completion rate
-- Handles status updates via `handleStatusChange()` function
-- Sends PATCH requests to `/api/requests/{id}/status`
-- Updates local state optimistically (works even if API call fails)
-
-## Styling Approach
-
-- Global styles in `index.css` for common elements (buttons, forms, containers)
-- Component-specific CSS files for component styling
-- Mobile-first responsive design using CSS Grid and Flexbox
-- CSS custom properties for consistent colors and spacing
-
-## Future Enhancements
-
-- Map integration for location visualization
-- Real-time updates using WebSockets
-- User authentication and profiles
-- Advanced filtering and search
-- Multi-language support
-- Offline support with service workers
-- Push notifications for urgent requests
-
-## Development Guidelines
-
-1. **Component Organization**: Each component should have its own CSS file
-2. **Responsive Design**: Test on mobile devices and use relative units
-3. **Accessibility**: Include proper ARIA labels and semantic HTML
-4. **Performance**: Lazy load components and optimize images
-5. **Error Handling**: Implement proper error boundaries and user feedback
-
-## Contributing
-
-1. Follow the existing code style and component structure - Look at `RequestForm.jsx` (Gemini integration) and `DashboardPage.jsx`
-2. Add CSS files for new components
-3. Test responsive design on multiple screen sizes
-4. Update documentation for new features
+- Run the dev server here and report build errors/warnings
+- Remove the placeholder `UserMap.jsx` file completely (currently it exports null to keep imports safe)
+- Add additional translations or a new language
+- Reintroduce maps in a separate branch with a mapping approach compatible with React 19
 
 ## Contributors
 
-1. Alec Gomez - Frontend / DevOps
-2. 
-3. 
-4. 
+- Alec Gomez — Frontend / DevOps

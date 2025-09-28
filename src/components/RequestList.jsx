@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import RequestCard from './RequestCard.jsx';
 import './RequestList.css';
 
@@ -6,6 +7,7 @@ const RequestList = ({ requests, isLoading, error, onStatusChange }) => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
+  const { t } = useTranslation();
 
   const categories = ['all', 'food', 'water', 'shelter', 'medical', 'other'];
   const statuses = ['all', 'unclaimed', 'claimed', 'completed'];
@@ -35,15 +37,16 @@ const RequestList = ({ requests, isLoading, error, onStatusChange }) => {
       case 'oldest':
         return new Date(a.created_at || 0) - new Date(b.created_at || 0);
       default:
-        return 0;
+                return 0;
     }
   });
+ 
 
   if (isLoading) {
     return (
       <div className="request-list-loading">
         <div className="loading-spinner"></div>
-        <p>Loading requests...</p>
+        <p>{t('loadingRequests')}</p>
       </div>
     );
   }
@@ -51,10 +54,10 @@ const RequestList = ({ requests, isLoading, error, onStatusChange }) => {
   if (error) {
     return (
       <div className="request-list-error">
-        <h3>Error Loading Requests</h3>
+        <h3>{t('errorLoading')}</h3>
         <p>{error}</p>
         <button className="btn btn-primary" onClick={() => window.location.reload()}>
-          Retry
+          {t('retry')}
         </button>
       </div>
     );
@@ -64,15 +67,15 @@ const RequestList = ({ requests, isLoading, error, onStatusChange }) => {
     <div className="request-list">
       <div className="request-list-header">
         <div className="request-list-title">
-          <h2>Aid Requests</h2>
+          <h2>{t('requests')}</h2>
           <span className="request-count">
-            {sortedRequests.length} request{sortedRequests.length !== 1 ? 's' : ''}
+            {sortedRequests.length} {t('requests')}
           </span>
         </div>
 
         <div className="request-list-controls">
           <div className="filter-group">
-            <label htmlFor="category-filter">Category:</label>
+            <label htmlFor="category-filter">{t('category')}:</label>
             <select
               id="category-filter"
               value={categoryFilter}
@@ -81,14 +84,14 @@ const RequestList = ({ requests, isLoading, error, onStatusChange }) => {
             >
               {categories.map(category => (
                 <option key={category} value={category}>
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                  {t(`categories.${category}`)}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="filter-group">
-            <label htmlFor="status-filter">Status:</label>
+            <label htmlFor="status-filter">{t('status')}:</label>
             <select
               id="status-filter"
               value={statusFilter}
@@ -97,22 +100,22 @@ const RequestList = ({ requests, isLoading, error, onStatusChange }) => {
             >
               {statuses.map(status => (
                 <option key={status} value={status}>
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                  {t(`statuses.${status}`)}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="filter-group">
-            <label htmlFor="sort-by">Sort by:</label>
+            <label htmlFor="sort-by">{t('sortBy')}:</label>
             <select
               id="sort-by"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="filter-select"
             >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
+              <option value="newest">{t('newestFirst')}</option>
+              <option value="oldest">{t('oldestFirst')}</option>
             </select>
           </div>
         </div>
@@ -120,11 +123,11 @@ const RequestList = ({ requests, isLoading, error, onStatusChange }) => {
 
       {sortedRequests.length === 0 ? (
         <div className="request-list-empty">
-          <h3>No requests found</h3>
+          <h3>{t('noRequestsTitle')}</h3>
           <p>
             {categoryFilter === 'all' && statusFilter === 'all'
-              ? 'No aid requests have been submitted yet.'
-              : `No requests found matching the current filters.`
+              ? t('noRequests')
+              : t('noRequestsFilter')
             }
           </p>
         </div>

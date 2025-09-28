@@ -99,3 +99,23 @@
     margin-top: 10px;
   }
 }
+
+/* Top-left small tabs for Users/Organizations */
+.header-tabs {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tab-link {
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #4a5568;
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.tab-link:hover { background: #f1f5f9; color: #2b6cb0; }
+.tab-link.active { background: #ebf8ff; color: #2b6cb0; border-color: #c3ddf7; }

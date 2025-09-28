@@ -1,0 +1,96 @@
+{
+  "appName": "RapidAid",
+  "users": "Usuarios",
+  "organizations": "Organizaciones",
+  "requestForm": "Formulario",
+  "map": "Mapa",
+  "requests": "Solicitudes",
+  "submitRequest": "Enviar Solicitud",
+  "dashboard": "Panel",
+  "submitAidTitle": "Solicitar Ayuda de Emergencia",
+  "submitAidDescription": "Envíe su solicitud de ayuda y nuestro sistema de IA la clasificará y priorizará para conectarlo con los recursos adecuados rápidamente.",
+  "howItWorks": "Cómo Funciona",
+  "steps": {
+    "submit": "Envíe su solicitud",
+    "ai": "Clasificación por IA",
+    "connect": "Conectarse",
+    "submitDesc": "Proporcione su ubicación y describa qué ayuda necesita",
+    "aiDesc": "Nuestro sistema categoriza y prioriza automáticamente su solicitud",
+    "connectDesc": "Los respondedores locales y proveedores de ayuda verán su solicitud y responderán"
+  },
+  "name": "Su nombre (opcional)",
+  "location": "Ubicación",
+  "requestDetails": "Detalles de la solicitud",
+  "submit": "Enviar",
+  "directions": "Indicaciones",
+  "language": "Idioma"
+  ,
+  "requiredFields": "Por favor complete todos los campos obligatorios.",
+  "successSubmitted": "¡Éxito! Su solicitud ha sido enviada correctamente.",
+  "error": "Error",
+  "placeholders": {
+    "name": "Ingrese su nombre",
+    "location": "Ingrese su ubicación (por ejemplo, Calle Principal 123, Ciudad, Estado)",
+    "requestDetails": "Describa qué tipo de ayuda necesita (comida, agua, suministros médicos, refugio, etc.)..."
+  },
+  "hints": {
+    "location": "Proporcione una ubicación lo más específica posible para una respuesta más rápida",
+    "requestDetails": "Sea lo más específico posible. Incluya cantidades, nivel de urgencia y cualquier requisito especial."
+  },
+  "submitting": "Enviando...",
+  "emergency": {
+    "title": "Aviso de emergencia:",
+    "text": "Si se trata de una emergencia que ponga en peligro la vida, llame al 911 de inmediato. Este sistema es para la coordinación de ayuda no urgente."
+  },
+  "justNow": "Ahora mismo",
+  "at": "a las",
+  "claimRequest": "Reclamar solicitud",
+  "markComplete": "Marcar como completada",
+  "unclaim": "Cancelar reclamo",
+  "requestFulfilled": "Solicitud satisfecha",
+  "nameLabel": "Nombre:",
+  "locationLabel": "Ubicación:",
+  "id": "ID",
+  "loadingRequests": "Cargando solicitudes...",
+  "errorLoading": "Error al cargar solicitudes",
+  "retry": "Reintentar",
+  "category": "Categoría",
+  "status": "Estado",
+  "sortBy": "Ordenar por",
+  "newestFirst": "Más recientes primero",
+  "oldestFirst": "Más antiguas primero",
+  "noRequestsTitle": "No se encontraron solicitudes",
+  "noRequests": "Aún no se han enviado solicitudes de ayuda.",
+  "noRequestsFilter": "No se encontraron solicitudes que coincidan con los filtros actuales.",
+  "dashboardDescription": "Vea y responda a las solicitudes de ayuda en su área",
+  "loading": "Cargando...",
+  "refreshData": "Actualizar datos",
+  "confirmClearDatabase": "¿Borrar todas las solicitudes de la base de datos? Esto no se puede deshacer.",
+  "clearDatabase": "Borrar base de datos",
+  "anonymous": "Anónimo",
+  "addSampleData": "Agregar datos de muestra",
+  "forRespondersTitle": "Para respondedores",
+  "forRespondersText": "Para responder a una solicitud, contacte directamente al solicitante usando la información proporcionada. Para la coordinación con otros respondedores, use los canales de comunicación estándar de su organización."
+  ,
+  "responseStatus": "Estado de Respuesta",
+  "needsHelp": "Necesita ayuda",
+  "inProgress": "En progreso",
+  "completed": "Completado",
+  "completionRate": "Tasa de finalización"
+  ,
+  "errorLoadDB": "Error al cargar las solicitudes de la base de datos. Use 'Agregar datos de muestra' para poblar con datos de prueba.",
+  "categories": {
+    "all": "Todas",
+    "food": "Comida",
+    "water": "Agua",
+    "shelter": "Refugio",
+    "medical": "Médico",
+    "other": "Otro"
+  },
+  "statuses": {
+    "all": "Todas",
+    "unclaimed": "Sin reclamar",
+    "claimed": "Reclamadas",
+    "completed": "Completadas"
+  }
+}

@@ -1,13 +1,16 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import CategoryBadge from './CategoryBadge.jsx';
 import StatusBadge from './StatusBadge.jsx';
 import './RequestCard.css';
 
 const RequestCard = ({ request, onStatusChange }) => {
+  const { t } = useTranslation();
+
   const formatDate = (dateString) => {
-    if (!dateString) return 'Just now';
+    if (!dateString) return t('justNow');
     const date = new Date(dateString);
-    return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], { 
+    return date.toLocaleDateString() + ' ' + t('at') + ' ' + date.toLocaleTimeString([], { 
       hour: '2-digit', 
       minute: '2-digit' 
     });
@@ -29,7 +32,7 @@ const RequestCard = ({ request, onStatusChange }) => {
             className="btn btn-primary btn-sm"
             onClick={() => handleStatusChange('claimed')}
           >
-            Claim Request
+            {t('claimRequest')}
           </button>
         );
       case 'claimed':
@@ -39,19 +42,19 @@ const RequestCard = ({ request, onStatusChange }) => {
               className="btn btn-success btn-sm"
               onClick={() => handleStatusChange('completed')}
             >
-              Mark Complete
+              {t('markComplete')}
             </button>
             <button 
               className="btn btn-secondary btn-sm"
               onClick={() => handleStatusChange('unclaimed')}
             >
-              Unclaim
+              {t('unclaim')}
             </button>
           </div>
         );
       case 'completed':
         return (
-          <span className="completion-note">✓ Request fulfilled</span>
+          <span className="completion-note">✓ {t('requestFulfilled')}</span>
         );
       default:
         return null;
@@ -78,24 +81,42 @@ const RequestCard = ({ request, onStatusChange }) => {
         <div className="request-info">
           {request.name && (
             <div className="request-name">
-              <span className="info-label">Name:</span>
+              <span className="info-label">{t('nameLabel')}</span>
               <span className="info-value">{request.name}</span>
             </div>
           )}
           <div className="request-location">
-            <span className="info-label">Location:</span>
+            <span className="info-label">{t('locationLabel')}</span>
             <span className="info-value">{request.location}</span>
           </div>
         </div>
         {request.id && (
           <div className="request-id">
-            ID: {request.id}
+            {t('id')}: {request.id}
           </div>
         )}
       </div>
 
       <div className="request-card-actions">
         {getStatusActions()}
+        {/* Directions button opens Google Maps directions from current location to the request location */}
+        {request.location && (
+          (() => {
+            const { t } = useTranslation();
+            return (
+              <button
+                className="btn btn-outline btn-sm directions-btn"
+                onClick={() => {
+                  const destination = encodeURIComponent(request.location);
+                  const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+                  window.open(url, '_blank');
+                }}
+              >
+                {t('directions')}
+              </button>
+            );
+          })()
+        )}
       </div>
     </div>
   );

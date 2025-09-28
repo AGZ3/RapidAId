@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import RequestList from '../components/RequestList.jsx';
 import databaseService from '../services/databaseService.js';
 import './DashboardPage.css';
@@ -7,6 +9,8 @@ const DashboardPage = () => {
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const params = new URLSearchParams(useLocation().search);
+  const activeTab = params.get('tab') || 'requests';
 
   // Mock data for development
   const mockRequests = [
@@ -117,8 +121,8 @@ const DashboardPage = () => {
       console.error('❌ Error fetching requests from database:', err);
       
       // Show error but don't fallback to mock data
-      setRequests([]);
-      setError('Failed to load requests from database. Use "Add Sample Data" to populate with test data.');
+        setRequests([]);
+        setError(t('errorLoadDB'));
     } finally {
       setIsLoading(false);
     }
@@ -194,13 +198,15 @@ const DashboardPage = () => {
 
   const stats = getStatistics();
 
+  const { t } = useTranslation();
+
   return (
     <div className="dashboard-page">
       <div className="dashboard-header">
         <div className="container">
           <div className="dashboard-title">
-            <h1>Responder Dashboard</h1>
-            <p>View and respond to aid requests in your area</p>
+            <h1>{t('dashboard')}</h1>
+            <p>{t('dashboardDescription')}</p>
           </div>
 
           <div className="dashboard-actions">
@@ -209,14 +215,14 @@ const DashboardPage = () => {
               onClick={fetchRequests}
               disabled={isLoading}
             >
-              {isLoading ? 'Loading...' : 'Refresh Data'}
+              {isLoading ? t('loading') : t('refreshData')}
             </button>
             
             {/* Development Controls */}
             <button
               className="btn btn-secondary"
               onClick={async () => {
-                if (confirm('Clear all requests from database? This cannot be undone.')) {
+                if (confirm(t('confirmClearDatabase'))) {
                   try {
                     await databaseService.clearAllRequests();
                     await fetchRequests();
@@ -227,7 +233,7 @@ const DashboardPage = () => {
               }}
               style={{ marginLeft: '10px' }}
             >
-              Clear Database
+              {t('clearDatabase')}
             </button>
             
             <button
@@ -247,7 +253,7 @@ const DashboardPage = () => {
                   for (let i = 0; i < sampleRequests.length; i++) {
                     const request = sampleRequests[i];
                     await databaseService.addRequest(request);
-                    console.log(`✅ Added sample request ${i + 1}/${sampleRequests.length}: ${request.name || 'Anonymous'}`);
+                    console.log(`✅ Added sample request ${i + 1}/${sampleRequests.length}: ${request.name || t('anonymous')}`);
                     
                     // Add 300ms delay between requests (except for the last one)
                     if (i < sampleRequests.length - 1) {
@@ -263,7 +269,7 @@ const DashboardPage = () => {
               }}
               style={{ marginLeft: '10px' }}
             >
-              Add Sample Data
+              {t('addSampleData')}
             </button>
           </div>
         </div>
@@ -273,26 +279,26 @@ const DashboardPage = () => {
         <div className="container">
           {/* Status Statistics */}
           <div className="stats-section">
-            <h3 className="stats-section-title">Response Status</h3>
+            <h3 className="stats-section-title">{t('responseStatus')}</h3>
             <div className="stats-grid">
               <div className="stat-card urgent">
                 <div className="stat-number">{stats.statusCounts.unclaimed || 0}</div>
-                <div className="stat-label">Needs Help</div>
+                <div className="stat-label">{t('needsHelp')}</div>
               </div>
 
               <div className="stat-card progress">
                 <div className="stat-number">{stats.statusCounts.claimed || 0}</div>
-                <div className="stat-label">In Progress</div>
+                <div className="stat-label">{t('inProgress')}</div>
               </div>
 
               <div className="stat-card completed">
                 <div className="stat-number">{stats.statusCounts.completed || 0}</div>
-                <div className="stat-label">Completed</div>
+                <div className="stat-label">{t('completed')}</div>
               </div>
 
               <div className="stat-card">
                 <div className="stat-number">{Math.round(((stats.statusCounts.completed || 0) / stats.totalRequests) * 100) || 0}%</div>
-                <div className="stat-label">Completion Rate</div>
+                <div className="stat-label">{t('completionRate')}</div>
               </div>
             </div>
           </div>
@@ -301,6 +307,7 @@ const DashboardPage = () => {
 
       <div className="dashboard-content">
         <div className="container">
+          {/* Header controls the tab via the `tab` query param (e.g. ?tab=map or ?tab=requests) */}
           <RequestList
             requests={requests}
             isLoading={isLoading}
@@ -313,11 +320,8 @@ const DashboardPage = () => {
       <div className="responder-info">
         <div className="container">
           <div className="info-card">
-            <h3>For Responders</h3>
-            <p>
-              To respond to a request, contact the requester directly using the provided information.
-              For coordination with other responders, use your organization's standard communication channels.
-            </p>
+            <h3>{t('forRespondersTitle')}</h3>
+            <p>{t('forRespondersText')}</p>
           </div>
         </div>
       </div>

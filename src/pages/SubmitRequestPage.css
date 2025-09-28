@@ -30,6 +30,25 @@
   background: #f8fafc;
 }
 
+.inner-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.inner-tab {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: white;
+  cursor: pointer;
+}
+
+.inner-tab.active {
+  background: #ebf8ff;
+  border-color: #c3ddf7;
+}
+
 .how-it-works {
   max-width: 600px;
   margin: 60px auto 0;
