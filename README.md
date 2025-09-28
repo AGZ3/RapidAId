@@ -27,21 +27,23 @@ src/
 ├── components/           # Reusable UI components
 │   ├── Header.jsx        # Navigation header
 │   ├── Header.css
-│   ├── RequestForm.jsx   # Aid request submission form
+│   ├── RequestForm.jsx   # AI-powered request submission form with Gemini integration
 │   ├── RequestForm.css
 │   ├── RequestList.jsx   # List of aid requests with filtering
 │   ├── RequestList.css
 │   ├── RequestCard.jsx   # Individual request display with status actions
 │   ├── RequestCard.css
-│   ├── CategoryBadge.jsx # Category display badge
+│   ├── CategoryBadge.jsx # Category display badge (medical, food, shelter, water, other)
 │   ├── CategoryBadge.css
-│   ├── StatusBadge.jsx   # Request status badge (unclaimed/claimed/completed)
+│   ├── StatusBadge.jsx   # Request status badge (pending/unclaimed/claimed/completed)
 │   └── StatusBadge.css
 ├── pages/                # Page components
-│   ├── SubmitRequestPage.jsx    # Submit request page
+│   ├── SubmitRequestPage.jsx    # Submit request page with AI categorization
 │   ├── SubmitRequestPage.css
 │   ├── DashboardPage.jsx        # Responder dashboard with status analytics
 │   └── DashboardPage.css
+├── services/            # Business logic and API integration
+│   └── geminiService.js  # Gemini 2.0 Flash AI service for request categorization
 ├── assets/              # Static assets
 │   ├── logo.png
 │   └── react.svg
@@ -50,6 +52,26 @@ src/
 ├── index.css            # Global styles
 └── main.jsx             # App entry point
 ```
+
+## Key Components
+
+### RequestForm.jsx
+- **Primary Function**: AI-powered request submission with real-time categorization
+- **Integration**: Direct Gemini 2.0 Flash API integration (no server required)
+- **Features**: Form validation, error handling, console logging for testing
+- **Output**: Processes requests with AI categorization and timestamps
+
+### GeminiService.js
+- **Primary Function**: Manages Gemini AI API communication and request processing
+- **Features**: Environment variable configuration, error handling, fallback categorization
+- **Categories**: Automatically categorizes into medical, food, shelter, water, or other
+- **Testing**: Comprehensive console logging for development and debugging
+
+### Component Architecture
+- **Self-contained**: Each component manages its own state and styling
+- **Reusable**: Badge components for categories and status indicators
+- **Responsive**: Mobile-first design with CSS Grid and Flexbox
+- **Accessible**: Semantic HTML structure with proper ARIA labels
 
 ## Getting Started
 
@@ -72,10 +94,9 @@ src/
    ```
 
 3. Set up Gemini AI integration:
-   ```bash
-   cp .env.example .env
-   ```
+
    - Get your Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Create a .env file under the main directory
    - Add your API key to the `.env` file:
      ```
      VITE_GEMINI_API_KEY=your_actual_api_key_here
@@ -141,15 +162,6 @@ Gemini AI classifies requests into these categories:
 - **`medical`** - Healthcare and medical supplies
 - **`other`** - Everything else
 
-### Testing the AI Integration
-
-1. Open browser DevTools (F12) and go to Console tab
-2. Submit test requests through the form
-3. Watch the detailed AI processing logs
-4. Verify categorization accuracy
-
-For comprehensive testing guidelines, see `GEMINI_INTEGRATION.md`.
-
 ## Component Documentation
 
 ### Header
@@ -157,7 +169,7 @@ Navigation component with links to Submit Request and Dashboard pages.
 
 ### RequestForm
 Form component for submitting aid requests. Includes validation and loading states.
-- Sends POST request to `/api/requests`
+- Calls Gemini API directly to process requests in JSON formatW
 - Handles form validation (required: location, request_text)
 - Name field is optional
 
@@ -226,7 +238,7 @@ Main dashboard with analytics and request management:
 
 ## Contributing
 
-1. Follow the existing code style and component structure - Look at `RequestForm.jsx` and `DashboardPage.jsx`
+1. Follow the existing code style and component structure - Look at `RequestForm.jsx` (Gemini integration) and `DashboardPage.jsx`
 2. Add CSS files for new components
 3. Test responsive design on multiple screen sizes
 4. Update documentation for new features
