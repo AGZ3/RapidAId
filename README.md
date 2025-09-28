@@ -43,6 +43,7 @@ src/
 │   ├── DashboardPage.jsx        # Responder dashboard with status analytics
 │   └── DashboardPage.css
 ├── services/            # Business logic and API integration
+|   └── databaseService.js
 │   └── geminiService.js  # Gemini 2.0 Flash AI service for request categorization
 ├── assets/              # Static assets
 │   ├── logo.png
