@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './RequestForm.css';
+import geminiService from '../services/geminiService';
 
 const RequestForm = ({ onSubmitSuccess }) => {
   const [formData, setFormData] = useState({
@@ -32,37 +33,36 @@ const RequestForm = ({ onSubmitSuccess }) => {
     setIsSubmitting(true);
 
     try {
-          const response = await fetch('http://127.0.0.1:8000/api/requests', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            name: formData.name.trim() || '',
-            address: formData.location.trim(),
-            request_text: formData.request_text.trim()
-        })
-    });
+      console.log('🚀 Starting request processing with Gemini AI...');
+      
+      // Process request with Gemini AI categorization
+      const processedRequest = await geminiService.categorizeRequest({
+        name: formData.name.trim() || '',
+        location: formData.location.trim(),
+        request_text: formData.request_text.trim()
+      });
 
-
-      if (!response.ok) {
-        throw new Error('Failed to submit request');
-      }
-
-      const data = await response.json();
+      console.log('✅ Request successfully processed and categorized!');
 
       setSuccess(true);
       setFormData({ name: '', location: '', request_text: '' });
 
       if (onSubmitSuccess) {
-        onSubmitSuccess(data);
+        onSubmitSuccess(processedRequest);
       }
 
       // Clear success message after 5 seconds
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
-      console.error('Error submitting request:', err);
-      setError('Failed to submit request. Please try again.');
+      console.error('❌ Error processing request:', err);
+      
+      if (err.message.includes('API key')) {
+        setError('Gemini API key not configured. Please check your environment variables.');
+      } else if (err.message.includes('quota') || err.message.includes('limit')) {
+        setError('AI service temporarily unavailable. Please try again later.');
+      } else {
+        setError('Failed to process request. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
